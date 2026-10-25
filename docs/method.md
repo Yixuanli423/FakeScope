@@ -18,7 +18,7 @@ FakeInstruct expands FakeChain into authenticity judgments, holistic reasoning, 
 
 ## 3. Fine-tune a multimodal backbone
 
-FakeScope has two 7B variants: **FakeScope-M** uses mPLUG-Owl2, while **FakeScope-L** uses LLaVA-v1.5. The vision encoder remains frozen while the language model and modality projector are fine-tuned. See the [training recipe](training.md).
+FakeScope has two 7B variants: **FakeScope-M** uses mPLUG-Owl2, while **FakeScope-L** uses LLaVA-v1.5. The paper describes a frozen vision encoder while the language model and modality projector are fine-tuned. The [training guide](training.md#manuscript-recipe-and-reproduction-scope) distinguishes that recipe from the supplied launchers, including mPLUG-Owl2’s vision-freezing setting.
 
 ## 4. Estimate authenticity through token soft-scoring
 
@@ -38,6 +38,10 @@ It then applies a two-class softmax:
 $$p(c) = \frac{\exp(s_c)}{\exp(s_{\mathrm{fake}}) + \exp(s_{\mathrm{real}})}$$
 
 This operation uses the model’s logits, rather than asking it to write a confidence percentage in free text. It adds no trainable classifier head and requires no numerical-label supervision. The exact token IDs and insertion point depend on the tokenizer and conversation template, so a scoring implementation must verify both for each released checkpoint.
+
+### Public scoring implementation
+
+The released [LLaVA scorer](inference.md#scoring-settings-and-provenance) preserves the supplied evaluator’s default: extracting logits at the **first assistant token**, with no answer prefix. This differs from the authenticity-word position illustrated above. An explicit `--assistant-prefix "This image is"` option scores after that unfinished answer; this option has not been validated against the paper’s results. The script exports the four raw logits, the two soft scores, and run settings.
 
 ## Interpreting the outputs
 

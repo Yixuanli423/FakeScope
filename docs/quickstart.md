@@ -2,7 +2,7 @@
 
 [← Back to FakeScope](../README.md#getting-started)
 
-FakeScope uses the runtime of its underlying multimodal model. **FakeScope-M** and **FakeScope-L** require different packages and conversation templates.
+FakeScope uses the runtime of its underlying multimodal model. **FakeScope-M** and **FakeScope-L** require different packages and conversation templates. After setup, follow [Run FakeScope](inference.md) for the public inference launchers and LLaVA authenticity scorer.
 
 ## Model access and downloads
 
@@ -101,7 +101,7 @@ Inspect this image carefully and evaluate its authenticity using visual evidence
 Are the reflections consistent with the objects in this scene?
 ```
 
-These are example user prompts, not precomputed model outputs. Numeric authenticity scores require the [token soft-scoring procedure](method.md#4-estimate-authenticity-through-token-soft-scoring); a free-form chat response is not a substitute for extracting the relevant logits. The upstream chat interfaces may sample responses, so repeated answers can differ.
+These are example user prompts, not precomputed model outputs. For numeric authenticity scores, use the [FakeScope-L scoring script](inference.md#2-score-a-single-image-with-fakescope-l) and check its documented scoring position; a free-form chat response is not a substitute for extracting the relevant logits. The upstream chat interfaces may sample responses, so repeated answers can differ.
 
 ## Training data
 

@@ -51,4 +51,4 @@ The mean is the paper’s reported average across these six subsets, not a poole
 
 ## Reproduction status
 
-This repository currently documents the results and protocol. It does not yet include the original evaluation harness, split manifests, or saved prediction files. Matching preprocessing, checkpoints, prompts, split exclusions, token handling, and metric aggregation is necessary before making a direct numerical comparison.
+This repository documents the results and protocol and includes [inference scripts](inference.md) for image chat and LLaVA authenticity-logit export. The scorer preserves the supplied evaluator’s first-assistant-token position by default and records its settings. It does not include the complete benchmark evaluation harness, split manifests, or saved benchmark prediction files. Matching preprocessing, checkpoints, prompts, split exclusions, token handling, and metric aggregation is necessary before making a direct numerical comparison.

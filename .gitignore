@@ -9,5 +9,6 @@ venv/
 checkpoints/
 downloads/
 data/
+results/
 *.safetensors
 *.ckpt
