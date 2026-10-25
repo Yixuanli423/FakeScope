@@ -1,0 +1,8 @@
+# Install the LLaVA runtime first; DeepSpeed setup needs PyTorch already installed.
+-r llava.txt
+deepspeed==0.12.6
+ninja>=1.11,<2
+wheel>=0.41,<1
+wandb==0.16.6
+tensorboard>=2.15,<2.16
+# Install flash-attn==2.5.2 separately with --no-build-isolation after this file.

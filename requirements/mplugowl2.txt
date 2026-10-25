@@ -1,0 +1,14 @@
+# FakeScope-M runtime. Install in its own Python 3.10 environment.
+# Matches the core stack in Q-Instruct/eval_scripts/mplug_owl_2/pyproject.toml.
+# Upstream: X-PLUG/mPLUG-Owl@0f3068fdb47b77aedc71fc39f5735cd7aa35e8f9
+-r ../requirements.txt
+torch==2.0.1
+torchvision==0.15.2
+transformers==4.31.0
+tokenizers==0.13.3
+peft==0.4.0
+bitsandbytes==0.41.0
+pydantic==1.10.13
+gradio==3.35.2
+gradio_client==0.2.9
+icecream>=2.1,<3

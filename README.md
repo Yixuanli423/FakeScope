@@ -122,6 +122,7 @@ The paper evaluates inference on a **single NVIDIA A100 40GB**. This is the repo
 | Guide | What it covers |
 | :--- | :--- |
 | [Environment setup](docs/quickstart.md) | Model access, downloads, and backbone environments |
+| [Requirements](requirements/README.md) | Separate LLaVA / mPLUG-Owl2 dependency profiles for inference and training |
 | [Run inference](docs/inference.md) | Image chat, single-image scoring, batch manifests, and output formats |
 | [Train FakeScope](docs/training.md) | Training launchers, data preparation, and hyperparameters |
 | [Method notes](docs/method.md) | ACoTI, instruction tuning, and token soft-scoring |

@@ -37,49 +37,47 @@ The public file listings contain sharded model weights and tokenizer files for b
 
 ## Backbone environments
 
-Use separate environments for the two runtimes. Follow each upstream repository’s supported Python, PyTorch, and CUDA versions.
+The [requirements profiles](../requirements/README.md) follow Q-Instruct and the respective upstream backbone dependencies. Use **Python 3.10 on a Linux x86_64 CUDA machine**, with a separate environment for each model. Start from the FakeScope repository root in each example. The upstream revisions below match the dependency files.
 
 ### FakeScope-M: mPLUG-Owl2
 
-Inside a dedicated environment:
-
 ```bash
-git clone https://github.com/X-PLUG/mPLUG-Owl.git
-cd mPLUG-Owl/mPLUG-Owl2
-python -m pip install -e .
+python3.10 -m venv .venv/mplugowl2
+source .venv/mplugowl2/bin/activate
+
+export MPLUG_OWL2_ROOT=/absolute/path/to/mPLUG-Owl/mPLUG-Owl2
+# For a new checkout; use your existing matching checkout if already cloned.
+git clone https://github.com/X-PLUG/mPLUG-Owl.git "$(dirname "$MPLUG_OWL2_ROOT")"
+git -C "$(dirname "$MPLUG_OWL2_ROOT")" checkout 0f3068fdb47b77aedc71fc39f5735cd7aa35e8f9
+
+python -m pip install -r requirements/mplugowl2.txt -e "$MPLUG_OWL2_ROOT"
+python -m pip check
+bash scripts/infer_mplugowl2.sh --image-file /absolute/path/to/image.jpg
 ```
 
-Set the absolute paths to your downloaded checkpoint and input image, then launch the upstream image-chat interface:
-
-```bash
-python -m mplug_owl2.serve.cli \
-  --model-path /absolute/path/to/FakeScope/checkpoints/mplug_owl2_fakeinstruct_v3 \
-  --image-file /absolute/path/to/image.jpg \
-  --conv-mode mplug_owl2
-```
-
-The paper uses 448 × 448 inputs for this variant. See [mPLUG-Owl2 setup](https://github.com/X-PLUG/mPLUG-Owl/tree/main/mPLUG-Owl2) and its [model loader](https://github.com/X-PLUG/mPLUG-Owl/blob/main/mPLUG-Owl2/mplug_owl2/model/builder.py).
+The paper uses 448 × 448 inputs for this variant. The launcher selects the `mplug_owl2` conversation template. See the upstream [mPLUG-Owl2 setup](https://github.com/X-PLUG/mPLUG-Owl/tree/main/mPLUG-Owl2).
 
 ### FakeScope-L: LLaVA-v1.5
 
-Inside a separate dedicated environment:
+In a separate shell, or after deactivating the other environment:
 
 ```bash
-git clone https://github.com/haotian-liu/LLaVA.git
-cd LLaVA
-python -m pip install -e .
+python3.10 -m venv .venv/llava
+source .venv/llava/bin/activate
+
+export LLAVA_ROOT=/absolute/path/to/LLaVA
+# For a new checkout; use your existing matching checkout if already cloned.
+git clone https://github.com/haotian-liu/LLaVA.git "$LLAVA_ROOT"
+git -C "$LLAVA_ROOT" checkout c121f0432da27facab705978f83c4ada465e46fd
+
+python -m pip install -r requirements/llava.txt -e "$LLAVA_ROOT"
+python -m pip check
+bash scripts/infer_llava.sh --image-file /absolute/path/to/image.jpg
 ```
 
-Set your absolute checkpoint and image paths, and specify the LLaVA-v1.5 conversation template explicitly:
+The paper uses 336 × 336 inputs for this variant. The launcher selects the `llava_v1` conversation template. See [Run FakeScope](inference.md) for single-image and batch authenticity scoring, and [training setup](training.md#1-install-the-matching-training-environment) for the additional training requirements.
 
-```bash
-python -m llava.serve.cli \
-  --model-path /absolute/path/to/FakeScope/checkpoints/llava_1.5_fakeinstruct_v3 \
-  --image-file /absolute/path/to/image.jpg \
-  --conv-mode llava_v1
-```
-
-The paper uses 336 × 336 inputs for this variant. See [LLaVA setup](https://github.com/haotian-liu/LLaVA) and its [image-chat interface](https://github.com/haotian-liu/LLaVA/blob/main/llava/serve/cli.py).
+The root `requirements.txt` contains shared dependencies only. The two model-specific files include it automatically; do not combine their environments. The source checkout is required because these requirements alone do not install the backbone's Python package. The [dependency notes](../requirements/README.md) explain the selected versions and validation scope.
 
 ## Example queries
 

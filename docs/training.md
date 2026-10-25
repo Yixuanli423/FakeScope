@@ -11,23 +11,25 @@ The public launchers are based on the authors' FakeScope training scripts, which
 
 ## 1. Install the matching training environment
 
-Use separate environments for LLaVA and mPLUG-Owl2. Follow the upstream projects' Python, PyTorch, CUDA, and FlashAttention compatibility requirements. In the appropriate backbone checkout:
+First complete the [backbone environment setup](quickstart.md#backbone-environments). This installs PyTorch before DeepSpeed or FlashAttention need it during setup. Keep the two environments separate, and run the following commands from the FakeScope repository root in the matching activated environment:
 
 ```bash
-# LLaVA environment
-cd /absolute/path/to/LLaVA
-python -m pip install -e ".[train]"
-python -m pip install flash-attn --no-build-isolation
+# FakeScope-L: LLAVA_ROOT points to the upstream checkout used during setup.
+python -m pip install -r requirements/train-llava.txt -e "${LLAVA_ROOT}[train]"
+python -m pip install flash-attn==2.5.2 --no-build-isolation
+python -m pip check
 ```
 
 ```bash
-# mPLUG-Owl2 environment
-cd /absolute/path/to/mPLUG-Owl/mPLUG-Owl2
-python -m pip install -e ".[train]"
-python -m pip install flash-attn --no-build-isolation
+# FakeScope-M: MPLUG_OWL2_ROOT points to mPLUG-Owl/mPLUG-Owl2.
+python -m pip install -r requirements/train-mplugowl2.txt -e "${MPLUG_OWL2_ROOT}[train]"
+python -m pip install flash-attn==2.5.2 --no-build-isolation
+python -m pip check
 ```
 
-See the [setup guide](quickstart.md#backbone-environments) for clone commands. The launchers use DeepSpeed and the matching backbone checkout's `scripts/zero3.json`; they do not substitute one backbone's ZeRO configuration for the other. Set `DEEPSPEED_CONFIG` to use your own configuration.
+The [requirements guide](../requirements/README.md) lists the per-backbone versions and CUDA build prerequisites. DeepSpeed is pinned to **0.12.6 for LLaVA** and **0.9.5 for mPLUG-Owl2**, following their upstream training extras. FlashAttention is installed separately after PyTorch and the build tools; it may require a compatible local CUDA toolkit and compiler.
+
+The launchers use the matching backbone checkout's `scripts/zero3.json`; they do not substitute one backbone's ZeRO configuration for the other. Set `DEEPSPEED_CONFIG` to use your own configuration.
 
 ## 2. Prepare FakeInstruct
 

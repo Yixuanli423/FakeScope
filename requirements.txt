@@ -1,0 +1,21 @@
+# Shared dependencies only. Select requirements/llava.txt OR requirements/mplugowl2.txt.
+# Target: Python 3.10, Linux x86_64, NVIDIA CUDA. See requirements/README.md.
+# Based on Q-Instruct and the two upstream backbone pyproject.toml files.
+numpy==1.26.4
+Pillow==10.4.0
+huggingface-hub==0.23.5
+sentencepiece==0.1.99
+accelerate==0.21.0
+einops==0.6.1
+einops-exts==0.0.4
+timm==0.6.13
+scikit-learn==1.2.2
+httpx==0.24.0
+fastapi==0.103.2
+requests>=2.31,<3
+tqdm>=4.65,<5
+shortuuid>=1.0.11,<2
+markdown2[all]>=2.4,<3
+uvicorn>=0.23,<1
+packaging>=23.2,<25
+setuptools>=61,<70
