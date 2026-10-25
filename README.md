@@ -5,9 +5,13 @@
 <h1>FakeScope: Large Multimodal Expert Model for Transparent AI-Generated Image Forensics</h1>
 
 <p>
-  <a href="https://github.com/Yixuanli423">Yixuan Li</a><sup>1</sup>,
-  Yu Tian<sup>1</sup>, Yipo Huang<sup>2</sup>, Wei Lu<sup>3</sup>,<br>
-  Shiqi Wang<sup>1,✉</sup>, Weisi Lin<sup>4</sup>, Anderson Rocha<sup>5</sup>
+  <a href="https://yixuanli423.github.io/">Yixuan Li</a><sup>1</sup>,
+  <a href="https://scholar.google.com/citations?user=wBHHZcsAAAAJ&amp;hl=en">Yu Tian</a><sup>1</sup>,
+  <a href="https://scholar.google.com/citations?user=P01gibMAAAAJ&amp;hl=en">Yipo Huang</a><sup>2</sup>,
+  <a href="https://cse.sysu.edu.cn/en/node/2563">Wei Lu</a><sup>3</sup>,<br>
+  <a href="https://www.cs.cityu.edu.hk/~shiqwang/">Shiqi Wang</a><sup>1,✉</sup>,
+  <a href="https://personal.ntu.edu.sg/wslin/">Weisi Lin</a><sup>4</sup>,
+  <a href="https://www.ic.unicamp.br/~rocha/">Anderson Rocha</a><sup>5</sup>
 </p>
 <p>
   <sup>1</sup>City University of Hong Kong &nbsp; <sup>2</sup>Chang’an University<br>
