@@ -181,7 +181,7 @@ The public training launchers follow Q-Instruct’s **after** strategy and prese
 
 ## Scope and limitations
 
-FakeScope targets AI-generated image forensics. Its textual rationales are **post-hoc explanations for human inspection**, rather than proof of the model’s internal causal decision process. Soft scores reflect the selected token logits; they should not be interpreted as a guaranteed, calibrated probability for arbitrary images. Performance may change with new generators, image processing, and distribution shifts. Face manipulation and super-resolution are treated as out-of-distribution settings in the paper.
+FakeScope targets AI-generated image forensics. Its textual rationales are **post-hoc explanations for human inspection**, rather than proof of the model’s internal causal decision process.
 
 ## Citation
 
