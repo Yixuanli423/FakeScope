@@ -1,0 +1,45 @@
+cff-version: 1.2.0
+message: "If you use FakeScope, FakeChain, or FakeInstruct, please cite the paper below."
+type: software
+title: "FakeScope: Large Multimodal Expert Model for Transparent AI-Generated Image Forensics"
+authors:
+  - family-names: Li
+    given-names: Yixuan
+  - family-names: Tian
+    given-names: Yu
+  - family-names: Huang
+    given-names: Yipo
+  - family-names: Lu
+    given-names: Wei
+  - family-names: Wang
+    given-names: Shiqi
+  - family-names: Lin
+    given-names: Weisi
+  - family-names: Rocha
+    given-names: Anderson
+date-released: 2025-03-31
+doi: 10.48550/arXiv.2503.24267
+url: "https://arxiv.org/abs/2503.24267"
+repository-code: "https://github.com/Yixuanli423/FakeScope"
+preferred-citation:
+  type: article
+  title: "FakeScope: Large Multimodal Expert Model for Transparent AI-Generated Image Forensics"
+  authors:
+    - family-names: Li
+      given-names: Yixuan
+    - family-names: Tian
+      given-names: Yu
+    - family-names: Huang
+      given-names: Yipo
+    - family-names: Lu
+      given-names: Wei
+    - family-names: Wang
+      given-names: Shiqi
+    - family-names: Lin
+      given-names: Weisi
+    - family-names: Rocha
+      given-names: Anderson
+  year: 2025
+  journal: arXiv
+  doi: 10.48550/arXiv.2503.24267
+  url: "https://arxiv.org/abs/2503.24267"

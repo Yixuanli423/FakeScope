@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="416" viewBox="0 0 1280 416" role="img" aria-labelledby="title desc">
+  <title id="title">FakeScope — transparent AI-generated image forensics</title>
+  <desc id="desc">Detect. Explain. Investigate. 47,594 images, about 2 million visual instructions, and two 7B model backbones.</desc>
+  <defs>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#91d8ce" stroke-opacity=".09"/></pattern>
+    <clipPath id="lens"><circle cx="1060" cy="172" r="91"/></clipPath>
+  </defs>
+  <rect width="1280" height="416" rx="20" fill="#0e2633"/>
+  <rect x="800" width="480" height="416" rx="20" fill="url(#grid)"/>
+  <path d="M0 396H1280" stroke="#70dac7" stroke-width="2"/>
+  <text x="64" y="58" fill="#8bdece" font-family="Arial, Helvetica, sans-serif" font-size="15" letter-spacing="4">TRANSPARENT IMAGE FORENSICS</text>
+  <text x="59" y="167" fill="#f5faf9" font-family="Georgia, 'Times New Roman', serif" font-size="102" letter-spacing="-4">FakeScope</text>
+  <text x="64" y="218" fill="#c7dadf" font-family="Arial, Helvetica, sans-serif" font-size="28">Detect. Explain. Investigate.</text>
+  <path d="M64 254H754" stroke="#39505c"/>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <text x="64" y="310" fill="#f5faf9" font-size="33" font-weight="700">47,594</text>
+    <text x="64" y="340" fill="#aac3cc" font-size="16">images in FakeChain</text>
+    <text x="322" y="310" fill="#8bdece" font-size="33" font-weight="700">~2M</text>
+    <text x="322" y="340" fill="#aac3cc" font-size="16">visual instructions</text>
+    <text x="568" y="310" fill="#f5faf9" font-size="33" font-weight="700">2 × 7B</text>
+    <text x="568" y="340" fill="#aac3cc" font-size="16">model backbones</text>
+  </g>
+  <circle cx="1060" cy="172" r="126" fill="none" stroke="#456371" stroke-width="1"/>
+  <circle cx="1060" cy="172" r="108" fill="#133b47" stroke="#8bdece" stroke-width="3"/>
+  <circle cx="1060" cy="172" r="91" fill="#0e2633" stroke="#3a6b73"/>
+  <g clip-path="url(#lens)" fill="none" stroke="#56858c" stroke-width="1.5">
+    <path d="M964 124H1156M964 156H1156M964 188H1156M964 220H1156M996 80V268M1028 80V268M1060 80V268M1092 80V268M1124 80V268"/>
+    <rect x="1028" y="156" width="32" height="32" fill="#8bdece" fill-opacity=".38" stroke="#8bdece"/>
+    <rect x="1092" y="124" width="32" height="32" fill="#8bdece" fill-opacity=".14"/>
+    <rect x="996" y="188" width="32" height="32" fill="#8bdece" fill-opacity=".14"/>
+  </g>
+  <path d="M1039 149V140H1020M1069 149V140H1080M1039 196V205H1020M1069 196V205H1080" fill="none" stroke="#bdf3e6" stroke-width="3"/>
+  <path d="M1136 251L1193 308" stroke="#8bdece" stroke-width="20" stroke-linecap="round"/>
+  <path d="M1136 251L1193 308" stroke="#214b58" stroke-width="10" stroke-linecap="round"/>
+  <path d="M917 172H939M1181 172H1203M1060 29V51M1060 293V315" stroke="#8bdece" stroke-width="2"/>
+  <text x="1060" y="363" text-anchor="middle" fill="#8bdece" font-family="Arial, Helvetica, sans-serif" font-size="12" letter-spacing="3">FROM PIXELS TO EVIDENCE</text>
+</svg>
