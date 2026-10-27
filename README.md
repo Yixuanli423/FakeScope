@@ -23,7 +23,7 @@
   <a href="https://arxiv.org/abs/2503.24267"><img src="https://img.shields.io/badge/arXiv-2503.24267-B54448?style=flat-square" alt="Paper on arXiv"></a>
   <a href="#model-zoo"><img src="https://img.shields.io/badge/🤗_Hugging_Face-Models-207D83?style=flat-square" alt="Model zoo and download status"></a>
   <a href="mailto:yixuan.li@bristol.ac.uk?subject=FakeInstruct%20training%20data%20access%20request"><img src="https://img.shields.io/badge/Training_Data-Request_Access-C99A37?style=flat-square" alt="Request training data by email"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/Code-MIT-637583?style=flat-square" alt="Code license: MIT"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-Academic_Research_Only-637583?style=flat-square" alt="License: non-commercial academic research only"></a>
 </p>
 
 <p>
@@ -201,8 +201,24 @@ If you use FakeScope, FakeChain, or FakeInstruct in your research, please cite:
 
 ## License and acknowledgments
 
-Repository code is covered by the existing [MIT license](LICENSE). Model weights, training images, and dataset annotations remain subject to the terms supplied with those resources and their upstream sources; the code license does not replace those terms.
+Copyright (c) 2025-2026 Yixuan423. All rights reserved except as expressly granted in the [FakeScope Academic Research License, version 1.0](LICENSE).
 
-We thank the teams behind [LLaVA](https://github.com/haotian-liu/LLaVA), [mPLUG-Owl2](https://github.com/X-PLUG/mPLUG-Owl/tree/main/mPLUG-Owl2), and [Q-Instruct](https://github.com/Q-Future/Q-Instruct). This repository’s presentation and training workflow build on Q-Instruct; the supplied training launchers were adapted from its **after** strategy.
+| Use | Permission |
+| :--- | :--- |
+| Non-commercial academic research, paper reproduction, and experimental evaluation | Permitted |
+| Modification solely for the permitted research purposes | Permitted |
+| Redistribution of original or modified versions | Must retain copyright notices, the full license, applicable third-party notices, and the same use restrictions; modifications must be identified |
+| Commercial products, paid services, commercial R&D, and enterprise business operations | Prohibited |
+| Production deployment, operational use, external detection or verification services, and real-world decision-making | Prohibited, even when free of charge or conducted by a nonprofit organization |
+
+Running the software on research computing infrastructure and evaluating real-world datasets for scholarly experiments are permitted within the research scope. Operational use of the software or its results is prohibited.
+
+This is **source-available software for non-commercial academic research**, not an OSI-approved open-source release. The full [LICENSE](LICENSE) governs; this table is a summary.
+
+**Third-party and external resources:** Third-party components retain their original licenses. Model weights, training images, and dataset annotations hosted separately remain subject to the terms supplied with each release and their upstream sources. Updating this repository does not itself relicense those resources.
+
+**Earlier versions:** This license change does not revoke rights validly granted under the MIT License for earlier versions. Those copies remain governed by their original terms, together with any applicable third-party terms.
+
+We thank the teams behind [LLaVA](https://github.com/haotian-liu/LLaVA), [mPLUG-Owl2](https://github.com/X-PLUG/mPLUG-Owl/tree/main/mPLUG-Owl2), and [Q-Instruct](https://github.com/Q-Future/Q-Instruct).
 
 For questions, please [open an issue](https://github.com/Yixuanli423/FakeScope/issues) or contact [Yixuan Li](mailto:yixuan.li@bristol.ac.uk).

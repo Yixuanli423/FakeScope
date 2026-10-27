@@ -1,21 +1,120 @@
-MIT License
+FakeScope Academic Research License
+Version 1.0, 27 October 2026
 
-Copyright (c) 2025 Yixuan423
+Copyright (c) 2025-2026 Yixuan423
+All rights reserved except as expressly granted by this License.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+1. Scope
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+This License applies to the copyright holders' original code and documentation
+in this repository, and to other materials expressly released with this License
+(the "Materials"). It covers only rights the copyright holders are authorized
+to grant. Third-party materials and previously granted licenses are addressed
+in Section 5.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+This is a source-available license limited to non-commercial academic research.
+It is not an OSI-approved open-source license.
+
+2. Permission for non-commercial academic research
+
+Subject to all conditions of this License, you may access, use, reproduce,
+modify, and redistribute the Materials, in original or modified form, solely
+for non-commercial academic research.
+
+"Non-commercial academic research" means scientific investigation, scholarly
+experimentation, reproduction of research findings, benchmark evaluation, and
+preparation of scholarly publications, conducted solely to advance academic
+knowledge and not for commercial advantage, commercial research and
+development, business operations, or operational deployment.
+
+Research experiments, including running the Materials on research computing
+infrastructure, are permitted only within this scope. Running experiments on
+real-world datasets for scholarly evaluation is permitted; using the Materials
+or their results for operational services or real-world decisions is not.
+Merely describing an activity as "research" or publishing a paper does not make
+an otherwise prohibited use permissible.
+
+3. Prohibited uses
+
+You may not use the Materials, or modified versions incorporating the Materials,
+for any purpose outside Section 2. In particular, you may not:
+
+(a) sell, commercially license, or otherwise commercially exploit the Materials;
+(b) incorporate them into commercial products, paid services, commercial research
+    and development, or enterprise business operations;
+(c) deploy them in production systems or use them for operational activities;
+(d) provide external detection, verification, forensic analysis, or other
+    operational services using them; or
+(e) use them or their results to make, inform, or support real-world decisions,
+    including content moderation, operational fact-checking, authentication
+    services, legal proceedings, or law enforcement.
+
+The restrictions on production deployment, operational use, service provision,
+and real-world decision-making apply whether or not a fee is charged and
+whether the user is an individual, company, university, government body, or
+nonprofit organization. Human review does not remove these restrictions.
+
+4. Modification and redistribution
+
+For every redistribution of the Materials, or a modified version incorporating
+them, in source, binary, or other form, you must:
+
+(a) retain the copyright notices, a complete copy of this License, and all
+    applicable third-party notices and license texts;
+(b) clearly identify any modifications you make;
+(c) provide the Materials and modified versions under this same License,
+    preserving the non-commercial academic research limitation and all
+    prohibited-use restrictions; and
+(d) include these notices and terms in the accompanying documentation or other
+    materials when they cannot be included directly in the distributed files.
+
+You may not grant recipients broader rights to the Materials than this License
+grants. Each recipient receives permission from the applicable copyright
+holders only within the scope and conditions of this License. These terms do
+not claim ownership of unrelated works or independently developed material.
+
+5. Third-party materials, external resources, and prior licenses
+
+Third-party code, dependencies, base models, images, datasets, and other
+third-party materials remain governed by their own licenses. This License
+neither replaces those licenses nor grants rights the copyright holders do
+not possess. Preserve and comply with all applicable upstream terms.
+
+Model weights and datasets hosted separately are not automatically relicensed
+by this repository's License. Consult the license and access terms accompanying
+each resource. This License applies to such resources only when it is expressly
+adopted for that release, and only to rights the releasing copyright holders
+are authorized to grant.
+
+This License does not revoke or restrict rights already validly granted under
+earlier licenses, including the MIT License for earlier repository versions.
+Copies validly obtained under those earlier licenses remain subject to their
+original terms. Third-party licenses applicable to those copies also remain
+in force.
+
+6. Reserved rights and termination
+
+All rights not expressly granted are reserved. No right to use the copyright
+holders' names, trademarks, or logos for endorsement is granted.
+
+Permission under this License terminates automatically if you breach its
+conditions. Upon termination, you must cease exercising the permissions
+granted by this License. Termination does not affect the rights of recipients
+who remain in compliance or rights independently granted under another
+applicable license.
+
+Nothing in this License limits rights or exceptions that applicable law
+provides independently of this License.
+
+7. Disclaimer of warranty and limitation of liability
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE MATERIALS ARE PROVIDED
+"AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT.
+THE COPYRIGHT HOLDERS AND CONTRIBUTORS DO NOT WARRANT THE ACCURACY OR
+RELIABILITY OF ANY PREDICTIONS, EXPLANATIONS, SCORES, OR OTHER RESULTS.
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE COPYRIGHT HOLDERS AND
+CONTRIBUTORS SHALL NOT BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF,
+OR IN CONNECTION WITH THE MATERIALS OR THEIR USE.
