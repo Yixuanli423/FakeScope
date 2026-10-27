@@ -8,7 +8,7 @@ Ask for visual evidence in an image conversation, or export numerical authentici
 | :--- | :--- | :--- |
 | [`infer_llava.sh`](../scripts/infer_llava.sh) | FakeScope-L | Interactive image conversation |
 | [`infer_mplugowl2.sh`](../scripts/infer_mplugowl2.sh) | FakeScope-M | Interactive image conversation |
-| [`eval_prob_llava.py`](../scripts/eval_prob_llava.py) | FakeScope-L | Four anchor logits, two soft scores, and run settings |
+| [`eval_prob_llava.py`](../scripts/eval_prob_llava.py) | FakeScope-L | Four complete-anchor log likelihoods, two soft scores, and run settings |
 
 ## Before you start
 
@@ -57,17 +57,22 @@ The output is a JSON array. Each record retains the input fields and adds:
 
 | Field | Meaning |
 | :--- | :--- |
-| `logit_fake`, `logit_Fake` | Raw next-token logits for the two fake anchors |
-| `logit_real`, `logit_Real` | Raw next-token logits for the two real anchors |
-| `prob_fake`, `prob_real` | Two-class softmax of the sums of the case-variant logits |
+| `log_likelihood_fake`, `log_likelihood_Fake` | Conditional log likelihoods of the complete fake anchor sequences |
+| `log_likelihood_real`, `log_likelihood_Real` | Conditional log likelihoods of the complete real anchor sequences |
+| `prob_fake`, `prob_real` | Two-class softmax of the sums of the case-variant log likelihoods |
 
 The calculation is:
 
 ```text
-s_fake = logit_fake + logit_Fake
-s_real = logit_real + logit_Real
+logP(anchor) = sum_i log P(token_i | image, prompt, token_1, ..., token_{i-1})
+s_fake = logP(fake) + logP(Fake)
+s_real = logP(real) + logP(Real)
 [prob_fake, prob_real] = softmax([s_fake, s_real])
 ```
+
+An anchor such as `Fake` can contain multiple tokens. All its tokens are scored in order using teacher-forced candidate prefixes; the first subtoken alone is never treated as the complete word. There is no length normalization and no test-label conditioning. The case variants are combined by summing their log likelihoods, preserving the original case-variant aggregation; this is not a sum of alternative-word probabilities.
+
+When all four anchors are single tokens, this calculation gives the same soft scores as the original logit sum: both classes subtract the same normalization constant. For split anchors it is an explicit protocol extension, so historical results must be recomputed. `--anchor-policy strict` retains the earlier single-token-only behavior and `logit_*` fields, and fails on split anchors.
 
 Higher `prob_fake` indicates a stronger fake score. These are token-based soft scores, not calibrated probabilities or benchmark metrics. The script does not use labels to select a prompt or compute a prediction.
 
@@ -98,7 +103,7 @@ Results are written after all images finish. The script stops on malformed recor
 
 ## Scoring settings and provenance
 
-The scorer is adapted from the authors' supplied `eval_prob_llava.py`. It preserves the authenticity question, `llava_v1` template, four anchor logits, and direct `image_processor.preprocess` path. It validates that each anchor is a single distinct non-special token, instead of assuming the tokenizer always inserts one beginning-of-sequence token.
+The scorer is adapted from the authors' supplied `eval_prob_llava.py`. It preserves the authenticity question, `llava_v1` template, case-variant score aggregation, and direct `image_processor.preprocess` path. The default `sequence` policy validates distinct nonempty anchor sequences without special tokens and scores the complete words. The optional `strict` policy requires one token per anchor.
 
 **The default scores the first assistant token.** The supplied evaluator leaves the assistant turn empty before extracting logits. The paper describes the authenticity word in “This image is &lt;auth_token&gt;.” These are different scoring positions. To explicitly condition on that unfinished answer, use:
 
@@ -114,9 +119,11 @@ The prefix is appended to the open assistant turn without an end-of-turn separat
 
 **Precision is explicit.** The supplied evaluator forced 8-bit loading. This public entry point defaults to the upstream loader's float16 weights. Use `--load-8bit` to request the supplied evaluator's quantization choice, or `--load-4bit` for the upstream 4-bit option. Quantization requires the matching bitsandbytes/CUDA dependencies and can change scores. Set `--device cuda:1` to choose another GPU, or set `CUDA_VISIBLE_DEVICES` before launching; the script does not override it.
 
+**Checkpoint loading includes embedded vision weights.** When a sharded checkpoint includes the vision tower, the scorer constructs that tower before restoring the checkpoint. This prevents the upstream delayed loader from discarding the released vision weights and substituting a separately loaded CLIP tower. Checkpoints without embedded vision weights retain the upstream loading path.
+
 **Preprocessing is preserved.** The scorer passes RGB images directly to the checkpoint's image processor, without adding square padding. The interactive chat entry points follow their upstream preprocessing, which may use padding. Predictions from these paths are not guaranteed to be numerically interchangeable. Corrupt or truncated images are rejected instead of being silently accepted.
 
-Each run also writes `<answers-file>.meta.json`, recording the rendered prompt, assistant prefix, anchor token IDs, precision, preprocessing, model path, device, and record count. Keep this file with your predictions. The JSON manifest remains unchanged.
+Each run also writes `<answers-file>.meta.json`, recording the rendered prompt, assistant prefix, anchor token sequences, scoring policy, length-normalization setting, precision, preprocessing, model path, device, and record count. Keep this file with your predictions. The JSON manifest remains unchanged.
 
 ## Validation scope
 
@@ -126,4 +133,4 @@ The release includes lightweight tests for token selection, score arithmetic, in
 python -m unittest discover -s tests -v
 ```
 
-These checks do not download weights. End-to-end GPU inference with the gated checkpoints has not been verified in the release environment. This release provides image chat for both backbones and logit export for LLaVA; it does not include an mPLUG-Owl2 scoring evaluator or the complete benchmark evaluation harness. See [evaluation scope](results.md#reproduction-status).
+These checks do not download weights. A two-image GPU smoke test with the released FakeScope-L checkpoint verified complete-sequence scoring, including the two-token `Fake` anchor. Its scores agreed with the benchmark adapter within 1e-5. This validates the inference path, not the paper’s benchmark results. This release provides image chat for both backbones and logit export for LLaVA; it does not include an mPLUG-Owl2 scoring evaluator or the complete benchmark evaluation harness. See [evaluation scope](results.md#reproduction-status).

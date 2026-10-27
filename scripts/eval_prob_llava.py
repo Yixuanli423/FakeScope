@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Export FakeScope-L authenticity logits for one image or a JSON/JSONL manifest.
+"""Export FakeScope-L complete-anchor authenticity scores for one image or a JSON/JSONL manifest.
 
 Adapted from the authors' eval_prob_llava.py. See docs/inference.md for the
 scoring position, preprocessing, quantization, and output format.
@@ -34,6 +34,8 @@ def parse_args(argv=None):
     parser.add_argument("--assistant-prefix", default="",
                         help='Optional unfinished answer, e.g. "This image is". '
                              'Default: score the first assistant token, as in the supplied script.')
+    parser.add_argument("--anchor-policy", choices=("sequence", "strict"), default="sequence",
+                        help="Score complete anchor token sequences (default); strict preserves single-token logits and rejects split words.")
     parser.add_argument("--overwrite", action="store_true", help="Replace existing output files.")
     return parser.parse_args(argv)
 
@@ -100,6 +102,44 @@ def anchor_token_ids(tokenizer):
     return result
 
 
+def anchor_token_sequences(tokenizer):
+    """Keep every subtoken of each anchor; reject empty, special or duplicate sequences."""
+    result = {anchor: tokenizer(anchor, add_special_tokens=False)["input_ids"] for anchor in ANCHORS}
+    special_ids = set(tokenizer.all_special_ids)
+    for anchor, ids in result.items():
+        if not ids or special_ids.intersection(ids):
+            raise ValueError(f"Anchor {anchor!r} must contain non-special tokens; got {ids}.")
+    if len({tuple(ids) for ids in result.values()}) != len(ANCHORS):
+        raise ValueError("Case-variant anchors must have distinct token sequences.")
+    return result
+
+
+def sequence_log_likelihoods(token_sequences, next_log_probs):
+    """Sum log P(token | prompt, preceding anchor tokens), without length normalization.
+
+    next_log_probs(prefix_ids) returns next-token log probabilities. Cache shared
+    prefixes so all anchors reuse the same prompt forward pass. No reference
+    answers or generated decisions are used to condition these candidate scores.
+    """
+    cache = {}
+    result = {}
+    for anchor in ANCHORS:
+        ids = token_sequences[anchor]
+        if not ids:
+            raise ValueError("Anchor token sequence must not be empty")
+        total = 0.0
+        for index, token_id in enumerate(ids):
+            prefix = tuple(ids[:index])
+            if prefix not in cache:
+                cache[prefix] = next_log_probs(prefix)
+            value = float(cache[prefix][token_id])
+            if not math.isfinite(value):
+                raise ValueError("Non-finite anchor log probability")
+            total += value
+        result[anchor] = total
+    return result
+
+
 def build_prompt(template, image_token, assistant_prefix=""):
     conversation = template.copy()
     conversation.append_message(conversation.roles[0], image_token + "\n" + QUESTION)
@@ -111,7 +151,7 @@ def build_prompt(template, image_token, assistant_prefix=""):
 
 
 def soft_scores(logits):
-    """Sum case-variant logits, then apply a numerically stable two-class softmax."""
+    """Sum case-variant scores, then apply a numerically stable two-class softmax."""
     values = [float(logits[anchor]) for anchor in ANCHORS]
     if not all(math.isfinite(value) for value in values):
         raise ValueError("Non-finite authenticity logits; check the model and precision.")
@@ -133,6 +173,38 @@ def write_json(path, value):
     finally:
         if os.path.exists(temporary):
             os.unlink(temporary)
+
+
+def index_has_vision_weights(index):
+    return any(key.startswith("model.vision_tower.vision_tower.") for key in index.get("weight_map", {}))
+
+
+def load_llava_checkpoint(model_path, **kwargs):
+    """Restore embedded vision weights instead of silently discarding them on delayed load."""
+    from llava.model.builder import load_pretrained_model
+    from llava.model import llava_arch
+    from transformers.utils.hub import cached_file
+
+    embedded_vision = False
+    for filename in ("model.safetensors.index.json", "pytorch_model.bin.index.json"):
+        if Path(model_path).is_dir():
+            index_path = Path(model_path) / filename
+        else:
+            cached = cached_file(model_path, filename, _raise_exceptions_for_missing_entries=False)
+            index_path = Path(cached) if cached else None
+        if index_path and index_path.is_file():
+            embedded_vision = index_has_vision_weights(json.loads(index_path.read_text()))
+            break
+    original = llava_arch.build_vision_tower
+    if embedded_vision:
+        def build_loaded_vision(config, **options):
+            options["delay_load"] = False
+            return original(config, **options)
+        llava_arch.build_vision_tower = build_loaded_vision
+    try:
+        return load_pretrained_model(model_path, None, "llava-v1.5-7b", **kwargs)
+    finally:
+        llava_arch.build_vision_tower = original
 
 
 def load_image(source):
@@ -162,7 +234,6 @@ def main(args):
     )
     from llava.conversation import conv_templates
     from llava.mm_utils import tokenizer_image_token
-    from llava.model.builder import load_pretrained_model
     from llava.utils import disable_torch_init
 
     device = torch.device(args.device)
@@ -170,13 +241,14 @@ def main(args):
         raise ValueError("This scoring entry point requires a CUDA-enabled LLaVA environment.")
     disable_torch_init()
     # Explicit model family also permits checkpoint directories with custom names.
-    tokenizer, model, processor, _ = load_pretrained_model(
-        args.model_path, None, "llava-v1.5-7b",
+    tokenizer, model, processor, _ = load_llava_checkpoint(
+        args.model_path,
         load_8bit=args.load_8bit, load_4bit=args.load_4bit,
         device=str(device), device_map=str(device),
     )
     model.eval()
-    token_ids = anchor_token_ids(tokenizer)
+    token_ids = (anchor_token_ids(tokenizer) if args.anchor_policy == "strict"
+                 else anchor_token_sequences(tokenizer))
     image_token = DEFAULT_IMAGE_TOKEN
     if getattr(model.config, "mm_use_im_start_end", False):
         image_token = DEFAULT_IM_START_TOKEN + image_token + DEFAULT_IM_END_TOKEN
@@ -193,12 +265,23 @@ def main(args):
         image_tensor = processor.preprocess(image, return_tensors="pt")["pixel_values"]
         image_tensor = image_tensor.to(device=device, dtype=torch.float16)
         with torch.inference_mode():
-            next_logits = model(input_ids, images=image_tensor, use_cache=False)["logits"][0, -1]
-        logits = {anchor: next_logits[token_id].float().item()
-                  for anchor, token_id in token_ids.items()}
+            if args.anchor_policy == "strict":
+                next_logits = model(input_ids, images=image_tensor, use_cache=False)["logits"][0, -1]
+                values = {anchor: next_logits[token_id].float().item()
+                          for anchor, token_id in token_ids.items()}
+            else:
+                def next_log_probs(prefix_ids):
+                    conditioned_ids = input_ids
+                    if prefix_ids:
+                        continuation = torch.tensor([prefix_ids], dtype=input_ids.dtype, device=device)
+                        conditioned_ids = torch.cat([input_ids, continuation], dim=1)
+                    logits = model(conditioned_ids, images=image_tensor, use_cache=False)["logits"][0, -1]
+                    return logits.float().log_softmax(dim=-1)
+                values = sequence_log_likelihoods(token_ids, next_log_probs)
         result = dict(record)
-        result.update({"logit_" + anchor: value for anchor, value in logits.items()})
-        result.update(soft_scores(logits))
+        field_prefix = "logit_" if args.anchor_policy == "strict" else "log_likelihood_"
+        result.update({field_prefix + anchor: value for anchor, value in values.items()})
+        result.update(soft_scores(values))
         predictions.append(result)
         print(f"[{index}/{len(records)}] {record['image_id']}", file=sys.stderr)
 
@@ -212,8 +295,13 @@ def main(args):
         "rendered_prompt": prompt,
         "preprocessing": "image_processor.preprocess (no additional square padding)",
         "weight_precision": "8bit" if args.load_8bit else "4bit" if args.load_4bit else "float16",
+        "anchor_policy": args.anchor_policy,
         "anchor_token_ids": token_ids,
-        "aggregation": "softmax([logit_fake + logit_Fake, logit_real + logit_Real])",
+        "aggregation": ("softmax([logit_fake + logit_Fake, logit_real + logit_Real])"
+                        if args.anchor_policy == "strict" else
+                        "softmax([logP(fake) + logP(Fake), logP(real) + logP(Real)])"),
+        "length_normalization": False,
+        "protocol_note": "Complete-sequence adaptation; equivalent to logit sums when all four anchors are single tokens. Not a reproduction of historical scores for split anchors.",
         "device": str(device),
         "count": len(predictions),
     }

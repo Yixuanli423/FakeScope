@@ -66,6 +66,44 @@ class ScoringTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     scorer.anchor_token_ids(tokenizer)
 
+    def test_complete_sequences_preserve_split_words(self):
+        tokenizer = Tokenizer()
+        tokenizer.tokens["Fake"] = [383, 1296]
+        self.assertEqual(scorer.anchor_token_sequences(tokenizer)["Fake"], [383, 1296])
+        for bad in ([], [1, 4], [10]):
+            tokenizer.tokens["Fake"] = bad
+            with self.subTest(ids=bad), self.assertRaises(ValueError):
+                scorer.anchor_token_sequences(tokenizer)
+
+    def test_sequence_score_uses_conditional_second_token_and_caches_prompt(self):
+        sequences = {"fake": [10], "Fake": [11, 15], "real": [12], "Real": [13]}
+        calls = []
+        def next_log_probs(prefix):
+            calls.append(prefix)
+            return {10: -1., 11: -2., 12: -3., 13: -4.} if not prefix else {15: -5.}
+        values = scorer.sequence_log_likelihoods(sequences, next_log_probs)
+        self.assertEqual(values, {"fake": -1., "Fake": -7., "real": -3., "Real": -4.})
+        self.assertEqual(calls, [(), (11,)])
+        self.assertAlmostEqual(scorer.soft_scores(values)["prob_fake"], 1/(1+math.exp(1)))
+
+    def test_single_token_sequences_match_original_logit_aggregation(self):
+        logits = {"fake": 2., "Fake": 3., "real": 1., "Real": 1.}
+        normalizer = math.log(sum(math.exp(v) for v in logits.values()))
+        sequences = scorer.anchor_token_sequences(Tokenizer())
+        log_probs = {sequences[a][0]: value-normalizer for a,value in logits.items()}
+        scores = scorer.soft_scores(scorer.sequence_log_likelihoods(sequences, lambda _: log_probs))
+        self.assertAlmostEqual(scores["prob_fake"], scorer.soft_scores(logits)["prob_fake"])
+
+    def test_sequence_policy_is_default_and_strict_remains_available(self):
+        arguments = ["--image-file", "a.png", "--answers-file", "out.json"]
+        self.assertEqual(scorer.parse_args(arguments).anchor_policy, "sequence")
+        self.assertEqual(scorer.parse_args(arguments+["--anchor-policy", "strict"]).anchor_policy, "strict")
+
+    def test_embedded_vision_index_detection(self):
+        self.assertTrue(scorer.index_has_vision_weights({"weight_map": {
+            "model.vision_tower.vision_tower.vision_model.embeddings.class_embedding": "shard.bin"}}))
+        self.assertFalse(scorer.index_has_vision_weights({"weight_map": {"model.mm_projector.weight": "shard.bin"}}))
+
     def test_prefix_stays_inside_unfinished_assistant_turn(self):
         template = Conversation()
         plain = scorer.build_prompt(template, "<image>")
